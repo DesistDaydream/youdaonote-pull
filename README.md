@@ -1,5 +1,11 @@
 # youdaonote-pull
 
+项目改编自[youdaonote-pull](https://github.com/DeppWang/youdaonote-pull)
+
+## 个人修改部分
+
+- 删除本地有文件时只导出有更新的笔记的代码逻辑
+- 配置文件中新增 suffix，用于定义想要导出的文件类型，可用的值有`.docx` `.note` `.md`
 <!--Becauce basically only Chinese users use "Youdao Note", so this project only provides Chinese README.md-->
 
 现在有道云笔记不能导出笔记，迁移笔记很麻烦。此脚本可将所有笔记下载到本地。
@@ -9,10 +15,6 @@
 - 可将所有笔记（文件）按原格式下载到本地
 - 由于「笔记」类型文件下载后默认为 Xml 格式，不是正常笔记内容，**默认将其转换为 Markdown 格式**
 - 由于有道云笔记图床图片不能在有道云笔记外显示，**默认将其下载到本地，或指定上传到 [SM.MS](https://sm.ms)**
-## 个人修改
-
-- 删除本地有文件时只导出有更新的笔记的代码逻辑
-- 配置文件中新增 suffix，用于定义想要导出的文件类型，可用的值有`.docx` `.note` `.md`
 
 ## 使用步骤 <!--用法 Usage-->
 
