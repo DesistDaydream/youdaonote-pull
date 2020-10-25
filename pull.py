@@ -200,13 +200,10 @@ class YoudaoNoteSession(requests.Session):
         self.cstk = cookies_dict[0][1]
 
         return self.get_root_id()
-
+    
+    # 获取有道云笔记 root_id
+    # root_id 始终不会改变？可保存？可能会改变，几率很小。可以保存，保存又会带来新的复杂度。只要登录后，获取一下也没有影响
     def get_root_id(self) -> str:
-        """
-        获取有道云笔记 root_id
-        root_id 始终不会改变？可保存？可能会改变，几率很小。可以保存，保存又会带来新的复杂度。只要登录后，获取一下也没有影响
-        """
-
         data = {
             'path': '/',
             'entire': 'true',
@@ -215,7 +212,9 @@ class YoudaoNoteSession(requests.Session):
         }
         response = self.post(self.ROOT_ID_URL % self.cstk, data=data)
         json_obj = json.loads(response.content)
+        # print(json_obj)
         try:
+            # print(json_obj['fileEntry']['id'])
             return json_obj['fileEntry']['id']
         # Cookie 登录时可能错误
         except KeyError:
@@ -224,9 +223,8 @@ class YoudaoNoteSession(requests.Session):
             # raise LoginError('请检查账号密码是否正确！也可能因操作频繁导致需要验证码，请切换网络（改变 ip）或等待一段时间后重试！接口返回内容：',
             #                  json.dumps(parsed, indent=4, sort_keys=True))
 
+    # get_all 下载所有文件
     def get_all(self, local_dir, ydnote_dir, smms_secret_token, root_id, custom_suffix) -> None:
-        """ 下载所有文件 """
-
         # 如果本地为指定文件夹，下载到当前路径的 youdaonote 文件夹中
         if local_dir == '':
             local_dir = os.path.join(os.getcwd(), 'youdaonote')
@@ -238,7 +236,7 @@ class YoudaoNoteSession(requests.Session):
             except FileNotFoundError:
                 raise FileNotFoundError('请检查「%s」上层文件夹是否存在，并使用绝对路径！' % local_dir)
 
-        # 有道云笔记指定导出文件夹名不为 '' 时，获取文件夹 id
+        # 自己指定导出文件夹，而不是导出全部时，获取该文件夹 id
         if ydnote_dir != '':
             root_id = self.get_dir_id(root_id, ydnote_dir)
             logging.info('root_id: %s', root_id)
@@ -249,9 +247,8 @@ class YoudaoNoteSession(requests.Session):
         self.smms_secret_token = smms_secret_token  # 此处设置，后面会用，避免传参
         self.get_file_recursively(root_id, local_dir, custom_suffix)
 
+    # get_dir_id 获取有道云笔记指定文件夹 id，目前指定文件夹只能为顶层文件夹，如果要指定文件夹下面的文件夹，请自己改用递归实现
     def get_dir_id(self, root_id, ydnote_dir) -> str:
-        """ 获取有道云笔记指定文件夹 id，目前指定文件夹只能为顶层文件夹，如果要指定文件夹下面的文件夹，请自己改用递归实现 """
-
         url = self.DIR_MES_URL % (root_id, self.cstk)
         response = self.get(url)
         json_obj = json.loads(response.content)
@@ -266,9 +263,8 @@ class YoudaoNoteSession(requests.Session):
             if name == ydnote_dir:
                 return file_entry['id']
 
+    # get_file_recursively 递归遍历，根据 id 找到目录下的所有文件
     def get_file_recursively(self, id, local_dir, custom_suffix) -> None:
-        """ 递归遍历，根据 id 找到目录下的所有文件 """
-
         url = self.DIR_MES_URL % (id, self.cstk)
 
         response = self.get(url)
@@ -281,6 +277,7 @@ class YoudaoNoteSession(requests.Session):
             logging.info('json_obj: %s', json_obj)
             raise KeyError('有道云笔记修改了接口地址，此脚本暂时不能使用！请提 issue')
 
+        # ！！！导出笔记功能的主要循环逻辑，使用 for循环 遍历目录，并在循环体中调用导出文件函数
         for entry in json_obj['entries']:
             file_entry = entry['fileEntry']
             id = file_entry['id']
@@ -294,9 +291,10 @@ class YoudaoNoteSession(requests.Session):
                 self.get_file_recursively(id, sub_dir, custom_suffix)
             else:
                 print("找到文件", name)
-                self.judge_add_or_update(id, name, local_dir, file_entry, custom_suffix)
+                self.ready_get_file(id, name, local_dir, file_entry, custom_suffix)
 
-    def judge_add_or_update(self, id, name, local_dir, file_entry, custom_suffix) -> None:
+    # 开始下载笔记前准备
+    def ready_get_file(self, id, name, local_dir, file_entry, custom_suffix) -> None:
         # 避免 open() 函数失败（因为目录名错误），修改文件名
         name = self.optimize_name(name)        
 

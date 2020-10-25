@@ -14,7 +14,7 @@
     "local_dir": "E:/note",
     "ydnote_dir": "",
     "smms_secret_token": "",
-    "suffix": ".docx1"
+    "suffix": ".docx"
 }
 ```
 
