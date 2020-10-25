@@ -6,6 +6,18 @@
 
 - 删除本地有文件时只导出有更新的笔记的代码逻辑
 - 配置文件中新增 suffix，用于定义想要导出的文件类型，可用的值有`.docx` `.note` `.md`
+- 删除 config.json 文件，并忽略其上传,示例配置如下
+```
+{
+    "username": "12345678901@163.com",
+    "password": "123456",
+    "local_dir": "E:/node",
+    "ydnote_dir": "",
+    "smms_secret_token": "",
+    "suffix": ".docx1"
+}
+```
+
 <!--Becauce basically only Chinese users use "Youdao Note", so this project only provides Chinese README.md-->
 
 现在有道云笔记不能导出笔记，迁移笔记很麻烦。此脚本可将所有笔记下载到本地。
