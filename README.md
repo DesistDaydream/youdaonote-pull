@@ -11,7 +11,7 @@
 {
     "username": "12345678901@163.com",
     "password": "123456",
-    "local_dir": "E:/node",
+    "local_dir": "E:/note",
     "ydnote_dir": "",
     "smms_secret_token": "",
     "suffix": ".docx1"
