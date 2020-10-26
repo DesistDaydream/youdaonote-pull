@@ -69,8 +69,8 @@ sudo pip3 install markdownify  #  安装 markdownify，用于 html 转化为 md
 ```
 ```shell
 # Windows
-pip install requests  
-pip install markdownify
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple requests  
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple markdownify
 
 # 有问题可参考 https://www.liaoxuefeng.com/wiki/1016959663602400/1017493741106496
 ```
